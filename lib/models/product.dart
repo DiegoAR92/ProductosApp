@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class Product {
-  Product({
-    @required this.available,
-    @required this.name,
-    this.picture,
-    @required this.price,
-  });
+  Product(
+      {@required this.available,
+      @required this.name,
+      this.picture,
+      @required this.price,
+      this.id});
 
   bool available;
   String name;
@@ -33,4 +33,11 @@ class Product {
         "picture": picture,
         "price": price,
       };
+
+  Product copy() => Product(
+      available: this.available,
+      name: this.name,
+      price: this.price,
+      picture: this.picture,
+      id: this.id);
 }
