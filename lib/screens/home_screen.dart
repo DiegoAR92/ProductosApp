@@ -9,6 +9,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productServices = Provider.of<ProductsService>(context);
+    final authServices = Provider.of<AuthService>(context, listen: false);
 
     if (productServices.isLoading) {
       return LoadingScreen();
@@ -17,6 +18,15 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Productos'),
+        leading: IconButton(
+          icon: Icon(
+            Icons.logout_outlined,
+          ),
+          onPressed: () {
+            authServices.logout();
+            Navigator.pushReplacementNamed(context, 'login');
+          },
+        ),
       ),
       body: ListView.builder(
           itemCount: productServices.product.length,
