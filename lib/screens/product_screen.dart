@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:productos_app/services/services.dart';
 import 'package:productos_app/ui/input_decorations.dart';
@@ -50,7 +51,17 @@ class _ProductsScreenBody extends StatelessWidget {
                   child: IconButton(
                     icon: Icon(Icons.camera_alt_outlined),
                     color: Colors.white,
-                    onPressed: () {},
+                    onPressed: () async {
+                      final _picker = new ImagePicker();
+                      final XFile pickedFile = await _picker.pickImage(
+                          source: ImageSource.camera, imageQuality: 100);
+
+                      if (pickedFile == null) {
+                        return;
+                      }
+                      productService
+                          .updateSelectedProductImage(pickedFile.path);
+                    },
                   ),
                   top: 60,
                   right: 20,
@@ -66,9 +77,11 @@ class _ProductsScreenBody extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           if (!productForm.isValidForm()) return;
-          productService.saveOrCreateProduct(productForm.product);
+          final imageUrl = await productService.uploadImage();
+          productForm.product.picture = imageUrl;
+          await productService.saveOrCreateProduct(productForm.product);
         },
         child: Icon(Icons.save_outlined),
       ),
