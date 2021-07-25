@@ -75,16 +75,16 @@ class ProductsService extends ChangeNotifier {
     this.isSaving = true;
     notifyListeners();
     final url = Uri.parse(
-        'https://api.cloudinary.com/v1_1/<USER>/image/upload?upload_preset=<CODE>');
+        'https://api.cloudinary.com/v1_1/diegoar92/image/upload?upload_preset=vkvfzqly');
     final imageUploadRequest = http.MultipartRequest('POST', url);
     final file =
         await http.MultipartFile.fromPath('file', this.newPicture.path);
     imageUploadRequest.files.add(file);
     final streamResponse = await imageUploadRequest.send();
     final resp = await http.Response.fromStream(streamResponse);
-    this.newPicture = null;
     if (resp.statusCode != 200 && resp.statusCode != 201) return null;
     final decodeData = json.decode(resp.body);
+    this.newPicture = null;
     return decodeData['secure_url'];
   }
 }

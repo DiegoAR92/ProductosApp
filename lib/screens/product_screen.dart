@@ -54,7 +54,7 @@ class _ProductsScreenBody extends StatelessWidget {
                     onPressed: () async {
                       final _picker = new ImagePicker();
                       final XFile pickedFile = await _picker.pickImage(
-                          source: ImageSource.camera, imageQuality: 100);
+                          source: ImageSource.gallery, imageQuality: 100);
 
                       if (pickedFile == null) {
                         return;
@@ -77,13 +77,19 @@ class _ProductsScreenBody extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          if (!productForm.isValidForm()) return;
-          final imageUrl = await productService.uploadImage();
-          productForm.product.picture = imageUrl;
-          await productService.saveOrCreateProduct(productForm.product);
-        },
-        child: Icon(Icons.save_outlined),
+        onPressed: productService.isSaving
+            ? null
+            : () async {
+                if (!productForm.isValidForm()) return;
+                final imageUrl = await productService.uploadImage();
+                productForm.product.picture = imageUrl;
+                await productService.saveOrCreateProduct(productForm.product);
+              },
+        child: productService.isSaving
+            ? CircularProgressIndicator(
+                color: Colors.white,
+              )
+            : Icon(Icons.save_outlined),
       ),
     );
   }
