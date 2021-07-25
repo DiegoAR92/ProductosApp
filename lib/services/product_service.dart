@@ -9,7 +9,6 @@ class ProductsService extends ChangeNotifier {
       'flutter-varios-292de-default-rtdb.europe-west1.firebasedatabase.app';
   final List<Product> product = [];
   Product selectedProduct;
-
   bool isLoading = true;
   bool isSaving = false;
   ProductsService() {
@@ -21,10 +20,7 @@ class ProductsService extends ChangeNotifier {
     notifyListeners();
     final url = Uri.https(_baseUrl, 'products.json');
     final resp = await http.get(url);
-
     final Map<String, dynamic> productsMap = json.decode(resp.body);
-    print(productsMap);
-
     productsMap.forEach((key, value) {
       final tempProduct = Product.fromMap(value);
       tempProduct.id = key;
@@ -36,28 +32,32 @@ class ProductsService extends ChangeNotifier {
   }
 
   Future saveOrCreateProduct(Product product) async {
-    print(product);
     isSaving = true;
     notifyListeners();
     if (product.id == null) {
+      await createProduct(product);
     } else {
-      updateProduct(product);
+      await updateProduct(product);
     }
-
     isSaving = false;
     notifyListeners();
   }
 
   Future<String> updateProduct(Product product) async {
     final url = Uri.https(_baseUrl, 'products/${product.id}.json');
-    final resp = await http.put(url, body: product.toJson());
-    final decodeData = resp.body.toString();
-    print(decodeData);
-
+    await http.put(url, body: product.toJson());
     final index =
         this.product.indexWhere((element) => element.id == product.id);
     this.product[index] = product;
+    return product.id;
+  }
 
+  Future<String> createProduct(Product product) async {
+    final url = Uri.https(_baseUrl, 'products.json');
+    final resp = await http.post(url, body: product.toJson());
+    final decodeData = json.decode(resp.body);
+    product.id = decodeData['name'];
+    this.product.add(product);
     return product.id;
   }
 }

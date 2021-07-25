@@ -20,7 +20,7 @@ class ProductImage extends StatelessWidget {
                 topLeft: Radius.circular(45), topRight: Radius.circular(45)),
             child: this.url == null
                 ? Image(
-                    image: AssetImage('assets/jar-loading.gif'),
+                    image: AssetImage('assets/no-image.png'),
                     fit: BoxFit.cover,
                   )
                 : FadeInImage(

@@ -68,7 +68,6 @@ class _ProductsScreenBody extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (!productForm.isValidForm()) return;
-          print(productForm.product);
           productService.saveOrCreateProduct(productForm.product);
         },
         child: Icon(Icons.save_outlined),
